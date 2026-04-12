@@ -1,0 +1,15 @@
+ What challenges did you face in setup?
+
+ Faced issues like PySpark setup, file path errors, and missing columns during joins.
+
+ How did you validate joins?
+
+ Checked using df.show(), count(), and verified columns using printSchema() to ensure correct data.
+
+ How did window functions help?
+
+ Helped in ranking, cumulative calculations, and analyzing data within groups without losing rows.
+
+ Can you explain your pipeline?
+
+ Loaded data → cleaned data → joined datasets → performed aggregations → applied segmentation → built final report.

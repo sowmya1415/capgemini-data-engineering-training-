@@ -1,0 +1,209 @@
+-- Employee and their manager (self join)
+%sql
+select e1.emp_name, e2.emp_name as manager_name 
+from employees e1 
+join employees e2 
+on e1.manager_id = e2.emp_id
+
+
+-- Employee with department name (only matching records)
+%sql
+select e.emp_name, d.dept_name 
+from employees e 
+join departments d 
+on e.dept_id = d.dept_id
+
+
+-- join condition (this will not work as expected)
+%sql
+select * 
+from employees e 
+join departments d 
+on e.dept_id is null
+
+
+-- Employees who do NOT belong to any department
+%sql
+select e.emp_name
+from employees e
+left join departments d
+on e.dept_id = d.dept_id
+where d.dept_id is null
+
+
+-- All employees with their projects (including employees without projects)
+%sql
+select e.emp_name, p.project_name 
+from employees e 
+left join projects p 
+on e.emp_id = p.emp_id 
+
+
+-- Only employees who have projects
+%sql
+select e.emp_name, p.project_name 
+from employees e  
+join projects p 
+on e.emp_id = p.emp_id 
+
+
+-- All projects with employees (including projects without employees)
+%sql
+select e.emp_name, p.project_name 
+from projects p 
+left join employees e 
+on p.emp_id = e.emp_id
+
+
+-- Duplicate of above query (same purpose)
+%sql 
+select e.emp_name, p.project_name
+from projects p 
+left join employees e 
+on p.emp_id = e.emp_id
+
+
+-- Employees with departments (including employees without department)
+%sql
+select e.emp_name, d.dept_name 
+from employees e 
+left join departments d 
+on e.dept_id = d.dept_id 
+
+
+-- All departments with employees (including empty departments)
+%sql
+select d.dept_name, e.emp_name 
+from departments d 
+left join employees e 
+on d.dept_id = e.dept_id
+
+
+-- Full outer join (shows all employees and all departments)
+%sql
+select e.emp_name, d.dept_name 
+from employees e 
+full outer join departments d 
+on e.dept_id = d.dept_id
+
+
+-- Employees who do NOT have any project
+%sql
+select e.emp_name, p.project_name 
+from employees e 
+left join projects p 
+on e.emp_id = p.emp_id 
+where p.emp_id is null
+
+
+-- Employees with manager and project (multiple joins)
+%sql
+select e.emp_name as employee_name,
+       m.emp_name as manager_name,
+       p.project_name
+from employees e
+join employees m
+on e.manager_id = m.emp_id
+join projects p
+on e.emp_id = p.emp_id 
+
+
+-- Employees with departments (LEFT JOIN version)
+%sql
+select e.emp_name, d.dept_name 
+from employees e  
+left join departments d 
+on e.dept_id = d.dept_id
+
+
+-- Employees with departments (INNER JOIN)
+%sql
+select e.emp_name, d.dept_name 
+from employees e 
+join departments d 
+on e.dept_id = d.dept_id
+
+
+-- Employees belonging to multiple departments (subquery filter)
+%sql
+select e.emp_name, d.dept_name
+from employees e
+join departments d
+on e.dept_id = d.dept_id
+where e.emp_name in (
+    select emp_name
+    from employees
+    group by emp_name
+    having count(distinct dept_id) > 1
+)
+
+
+-- All departments with employees (LEFT JOIN)
+%sql
+select d.dept_name, e.emp_name 
+from departments d 
+left join employees e 
+on d.dept_id = e.dept_id 
+
+
+-- Employees with projects but no department
+%sql
+select e.emp_name, p.project_name
+from employees e
+join projects p
+on e.emp_id = p.emp_id
+left join departments d
+on e.dept_id = d.dept_id
+where d.dept_id is null
+
+
+-- Count of employees per department (RIGHT JOIN)
+%sql
+select d.dept_name, count(e.emp_id)
+from departments d  
+right join employees e 
+on d.dept_id = e.dept_id 
+group by d.dept_name
+
+
+-- Employees with departments (INNER JOIN)
+%sql
+select e.emp_name, d.dept_name 
+from employees e  
+join departments d 
+on e.dept_id = d.dept_id
+
+
+-- Count of employees per department (RIGHT JOIN duplicate)
+%sql
+select d.dept_name, count(e.emp_id) 
+from departments d 
+right join employees e 
+on d.dept_id = e.dept_id 
+group by d.dept_name 
+
+
+--  join condition (dept_id compared with emp_id)
+%sql
+select d.dept_name, e.emp_name 
+from departments d 
+left join employees e 
+on d.dept_id = e.emp_id      
+
+
+-- Employees with their projects (LEFT JOIN)
+%sql
+select e.emp_name, p.project_name 
+from employees e  
+left join projects p 
+on e.emp_id = p.emp_id  
+
+
+-- Employees with department and project (multiple LEFT JOINs)
+%sql
+select e.emp_name, d.dept_name, p.project_name 
+from employees e 
+left join departments d 
+on e.dept_id = d.dept_id 
+left join projects p 
+on e.emp_id = p.emp_id

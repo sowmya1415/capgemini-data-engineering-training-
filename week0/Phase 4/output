@@ -1,0 +1,122 @@
++----------+-----------+
+| sale_date|total_sales|
++----------+-----------+
+|2024-01-19|         66|
+|2024-02-28|         67|
+|2024-02-08|         49|
+|2024-02-20|         34|
+|2024-03-03|         55|
+|2024-02-15|         45|
+|2024-02-12|         40|
+|2024-02-26|         89|
+|2024-02-06|         29|
+|2024-01-17|         49|
+|2024-01-18|        119|
+|2024-02-16|         35|
+|2024-02-23|         18|
+|2024-01-16|         25|
+|2024-02-19|         27|
+|2024-01-29|         92|
+|2024-02-10|         15|
+|2024-02-21|         92|
+|2024-01-15|         39|
+|2024-03-01|         22|
++----------+-----------+
+only showing top 20 rows
+
++-------------+-------------+
+|         city|total_revenue|
++-------------+-------------+
+|  Springfield|           68|
+|      Oakland|           40|
+|  San Antonio|           79|
+| Philadelphia|           60|
+| Indianapolis|           58|
+|    San Diego|           95|
+|    Nashville|           67|
+|San Francisco|           27|
+|      Detroit|           89|
+|       Albany|           79|
+|     Portland|           55|
+|        Boise|          110|
+|    St. Louis|           99|
+|     Columbus|           71|
+|      Memphis|           89|
+|   Washington|           92|
+|      El Paso|           19|
+|    Milwaukee|           66|
+|   Pittsburgh|           15|
+|      Chicago|           40|
++-------------+-------------+
+only showing top 20 rows
+
++---------+-----------+
+|last_name|total_spend|
++---------+-----------+
+|    Davis|        199|
+|   Garcia|        168|
+| Mitchell|        152|
+|  Johnson|        134|
+|    Moore|        119|
++---------+-----------+
+
++-----------+-----------+
+|customer_id|order_count|
++-----------+-----------+
+|         18|          2|
+|          1|          2|
+|          4|          2|
+|          2|          2|
++-----------+-----------+
+
++-----------+---------+-----------+-------+
+|customer_id|last_name|total_spend|segment|
++-----------+---------+-----------+-------+
+|         21|   Wilson|         49| Bronze|
+|         33|    Baker|         34| Bronze|
+|         12| Anderson|         67| Bronze|
+|         16|    White|         60| Bronze|
+|         38|   Carter|         19| Bronze|
+|         13|   Thomas|         34| Bronze|
+|          1|    Smith|         68| Bronze|
+|         46|   Cooper|         12| Bronze|
+|         19| Thompson|         29| Bronze|
+|          9|   Garcia|         79| Bronze|
+|         14|   Taylor|         15| Bronze|
+|         15|  Jackson|         92| Bronze|
+|         40|    Evans|         40| Bronze|
+|         34| Mitchell|         92| Bronze|
+|         26|    Allen|         66| Bronze|
+|         31|    Adams|         50| Bronze|
+|         42|    Young|         22| Bronze|
+|         24|   Walker|         99| Bronze|
+|         18|   Martin|         58| Bronze|
+|         27|    Young|         79| Bronze|
++-----------+---------+-----------+-------+
+only showing top 20 rows
+
++-----------+---------+-------------+-----------+-----------+-------+
+|customer_id|last_name|         city|total_spend|order_count|segment|
++-----------+---------+-------------+-----------+-----------+-------+
+|         37|    Allen|    Charlotte|         39|          1| Bronze|
+|         21|   Wilson| Jacksonville|         49|          1| Bronze|
+|         24|   Walker|    St. Louis|         99|          1| Bronze|
+|         31|    Adams|     San Jose|         50|          1| Bronze|
+|         15|  Jackson|      Seattle|         92|          1| Bronze|
+|         17|   Harris|    San Diego|         40|          1| Bronze|
+|          5| Williams|     Lakeside|         66|          1| Bronze|
+|         18|   Martin| Indianapolis|         58|          2| Bronze|
+|         22|    Moore|       Boston|        119|          1| Bronze|
+|          8| Martinez|   Des Moines|         20|          1| Bronze|
+|         23|      Lee|   Pittsburgh|         15|          1| Bronze|
+|         35| Mitchell| Philadelphia|         60|          1| Bronze|
+|         32|    Green|San Francisco|         27|          1| Bronze|
+|          6|   Miller|      Oakland|         40|          1| Bronze|
+|          3|    Brown|   Greenville|         49|          1| Bronze|
+|         43|   Turner|      Chicago|         40|          1| Bronze|
+|          4|  Johnson|    Riverside|        134|          2| Bronze|
+|         13|   Thomas|       Denver|         34|          1| Bronze|
+|         19| Thompson|    Charlotte|         29|          1| Bronze|
+|         39|    Davis|      Memphis|         89|          1| Bronze|
++-----------+---------+-------------+-----------+-----------+-------+
+only showing top 20 rows

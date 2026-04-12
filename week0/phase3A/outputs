@@ -1,0 +1,17 @@
+Original Rows: 6
+Cleaned Rows: 3
++-----------+-------+---------+---+
+|customer_id|   name|     city|age|
++-----------+-------+---------+---+
+|          1|   Ravi|Hyderabad| 25|
+|          2|Unknown|  Chennai| 32|
+|          4|  Meena|  Unknown| 30|
++-----------+-------+---------+---+
+
++---------+--------------+
+|     city|customer_count|
++---------+--------------+
+|  Chennai|             1|
+|  Unknown|             1|
+|Hyderabad|             1|
++---------+--------------+

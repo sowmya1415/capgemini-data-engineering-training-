@@ -1,0 +1,24 @@
+1 Why do we convert continuous values into categories?
+
+ To make data easier to understand and use
+ Example: Instead of numbers, we use labels like Gold, Silver, Bronze
+
+2 What is the difference between business segmentation and technical bucketing?
+
+ Business segmentation → based on business rules (like revenue, strategy)
+ Technical bucketing → based on data ranges or algorithms
+
+3 When would fixed thresholds fail?
+
+ When data changes or is uneven
+ Example: If most customers spend very low or very high, fixed rules won’t work well
+
+4  How does quantile-based segmentation differ from fixed rules?
+
+ Fixed rules → predefined values (like >10000)
+ Quantile → based on actual data distribution (top %, middle %, bottom %)
+
+5 Which method would you use in real-world projects?
+
+ Mostly quantile-based segmentation
+ Because it adapts to data and gives balanced groups

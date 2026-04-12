@@ -1,0 +1,88 @@
+-- Total salary for each department
+%sql
+select department,sum(salary) from Employee group by department
+
+-- Count of employees in each department
+%sql
+select department,count(emp_id) from Employee group by department
+
+-- Average salary in each department
+%sql
+select department,avg(salary) from Employee group by department
+
+-- Departments having more than 1 employee
+%sql
+select department,count(emp_id) as c from employee group by department having c>1
+
+-- Maximum salary in each department
+%sql
+select department,max(salary) from Employee group by department
+
+-- Minimum salary in each department
+%sql
+select department,min(salary) from Employee group by department
+
+-- Departments where total salary is greater than 100000
+%sql
+select department,sum(salary) as total from Employee group by department having total>100000
+
+-- Departments having more than 2 employees
+%sql
+select department,count(emp_id) as c from Employee group by department having c>2
+
+-- Average salary per employee (grouped by emp_id and department) for employees joined after 2021-01-01
+%sql
+select emp_id,avg(salary),department from Employee where joining_date>'2021-01-01' group by department,emp_id
+
+-- Departments where total salary is greater than 75000
+%sql
+select department,sum(salary) as total from Employee group by department having total>75000
+
+-- Departments where total salary is less than 150000
+%sql
+select department,sum(salary) as total from Employee group by department having total<150000
+
+-- Departments having more than 1 employee (duplicate query)
+%sql
+select department,count(emp_id) as c from employee group by department having c>1
+
+-- Departments where total salary is greater than 125000
+%sql
+select department,sum(salary) as total from Employee group by department having total>125000
+
+-- Departments having more than 2 employees (duplicate query)
+%sql
+select department,count(emp_id) as c from employee group by department having c>2
+
+-- Departments where average salary is greater than 60000
+%sql
+select department,avg(salary) as total from Employee group by department having total>60000
+
+-- Departments where total salary is between 100000 and 200000
+%sql
+select department,sum(salary) as total from Employee group by department having total between 100000 and 200000
+
+-- Total sales amount for each employee
+%sql
+select emp_id, sum(amount) as total_sales 
+from Sales 
+group by emp_id
+
+
+-- Count of sales made by each employee using JOIN
+%sql
+select e.emp_id, count(s.sales_id) 
+from sales s 
+join employee e 
+on s.emp_id = e.emp_id 
+group by e.emp_id
+
+
+-- Employees who made more than 1 sale (grouped by name)
+%sql
+select e.emp_name, count(s.sales_id) as sales_count 
+from sales s 
+join employee e 
+on e.emp_id = s.emp_id 
+group by e.emp_name 
+having sales_count > 1

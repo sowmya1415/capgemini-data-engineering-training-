@@ -1,0 +1,49 @@
+-- Create employees table to store employee details
+CREATE TABLE employees (
+emp_id INT PRIMARY KEY,              -- Unique employee ID
+emp_name VARCHAR(50),                -- Employee name
+manager_id INT,                      -- Manager ID (self reference)
+dept_id INT                          -- Department ID
+);
+
+-- Insert employee records
+INSERT INTO employees (emp_id, emp_name, manager_id, dept_id) VALUES
+(1, 'Karthik', NULL, 1),            
+(2, 'Ajay', 1, 1),                   
+(3, 'Vijay', 1, 2),                  
+(4, 'Vinay', 2, 2),                  
+(5, 'Meena', 3, 3),                 
+(6, 'Veer', NULL, 4),                
+(7, 'Keerthi', 4, 5),                
+(8, 'Priya', 4, 5);                  
+
+
+-- Create departments table
+CREATE TABLE departments (
+dept_id INT PRIMARY KEY,             -- Unique department ID
+dept_name VARCHAR(50)                -- Department name
+);
+
+-- Insert department records
+INSERT INTO departments (dept_id, dept_name) VALUES
+(1, 'HR'),                           
+(2, 'IT'),                           
+(3, 'Finance'),
+(4, 'Marketing'),                    
+(5, 'Sales');                        
+
+
+-- Create projects table
+CREATE TABLE projects (
+project_id INT PRIMARY KEY,          
+project_name VARCHAR(50),            
+emp_id INT                          
+);
+
+-- Insert project records
+INSERT INTO projects (project_id, project_name, emp_id) VALUES
+(1, 'Project A', 1),                
+(2, 'Project B', 2),                
+(3, 'Project C', 3),
+(4, 'Project D', 4),                 
+(5, 'Project E', 5);                 

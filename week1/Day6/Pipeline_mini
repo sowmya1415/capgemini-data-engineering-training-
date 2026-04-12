@@ -1,0 +1,1971 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "676edfe0-dbee-48ca-9d72-bf1f61b7c796",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [],
+   "source": [
+    "%python\n",
+    "from pyspark.sql import SparkSession\n",
+    "from pyspark.sql.functions import *\n",
+    "spark= SparkSession.builder.getOrCreate()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "9b6e6f48-2146-460f-882d-fa6ec783aa50",
+     "showTitle": true,
+     "tableResultSettingsMap": {},
+     "title": "Cell 2"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+-----------+----------+\n|customer_id|sum(price)|\n+-----------+----------+\n|          1|     30000|\n|          2|    -20000|\n+-----------+----------+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "%python\n",
+    "customers = spark.createDataFrame([\n",
+    "    (1,\"John \",\"Hyderabad\"),\n",
+    "    (2,\"Alice\",\"Chennai\"),\n",
+    "    (3,None,\"Bangalore\")\n",
+    "],[\"customer_id\",\"name\",\"city\"])\n",
+    "\n",
+    "cars = spark.createDataFrame([\n",
+    "    (101,\"Toyota\",\"Camry\",30000),\n",
+    "    (102,\"Honda\",\"Civic\",-20000),\n",
+    "    (103,\"Hyundai\",\"i20\",15000)\n",
+    "],[\"car_id\",\"brand\",\"model\",\"price\"])\n",
+    "\n",
+    "sales = spark.createDataFrame([\n",
+    "    (1,1,101,\"2024-01-01\",1),\n",
+    "    (2,2,102,\"2024-01-02\",2),\n",
+    "    (3,99,103,\"2024-01-03\",1)\n",
+    "],[\"sale_id\",\"customer_id\",\"car_id\",\"sale_date\",\"quantity\"])\n",
+    "dealers=spark.createDataFrame([\n",
+    "    (1,\"hari\",\"hyderabad\"),\n",
+    "    (2,\"ram\",\"chennai\"),\n",
+    "    (3,\"kumar\",\"banglore\")\n",
+    "],[\"dealer_id\",\"name\",\"city\"])\n",
+    "sales_delaer=spark.createDataFrame([\n",
+    "    (101,1),\n",
+    "    (102,2),\n",
+    "    (103,3)],[\"saler_dealer_id\",\"dealer_id\"])\n",
+    "\n",
+    "sales = sales.withColumn(\"sale_date\", to_date(col(\"sale_date\")))\n",
+    "\n",
+    "df = sales.join(customers,\"customer_id\").join(cars,\"car_id\")\n",
+    "df.groupBy(\"customer_id\").sum(\"price\").show()\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "6410ce45-3432-411b-9d1c-811fda87f09a",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Dataset Tables"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "a3c4a8f0-a97b-407f-a3ae-1bc33d1a4918",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "display_data",
+     "data": {
+      "text/html": [
+       "<style scoped>\n",
+       "  .table-result-container {\n",
+       "    max-height: 300px;\n",
+       "    overflow: auto;\n",
+       "  }\n",
+       "  table, th, td {\n",
+       "    border: 1px solid black;\n",
+       "    border-collapse: collapse;\n",
+       "  }\n",
+       "  th, td {\n",
+       "    padding: 5px;\n",
+       "  }\n",
+       "  th {\n",
+       "    text-align: left;\n",
+       "  }\n",
+       "</style><div class='table-result-container'><table class='table-result'><thead style='background-color: white'><tr><th>customer_id</th><th>name</th><th>city</th></tr></thead><tbody><tr><td>1</td><td>John </td><td>Hyderabad</td></tr><tr><td>2</td><td>Alice</td><td>Chennai</td></tr><tr><td>3</td><td>null</td><td>Bangalore</td></tr></tbody></table></div>"
+      ]
+     },
+     "metadata": {
+      "application/vnd.databricks.v1+output": {
+       "addedWidgets": {},
+       "aggData": [],
+       "aggError": "",
+       "aggOverflow": false,
+       "aggSchema": [],
+       "aggSeriesLimitReached": false,
+       "aggType": "",
+       "arguments": {},
+       "columnCustomDisplayInfos": {},
+       "data": [
+        [
+         1,
+         "John ",
+         "Hyderabad"
+        ],
+        [
+         2,
+         "Alice",
+         "Chennai"
+        ],
+        [
+         3,
+         null,
+         "Bangalore"
+        ]
+       ],
+       "datasetInfos": [],
+       "dbfsResultPath": null,
+       "isJsonSchema": true,
+       "metadata": {},
+       "overflow": false,
+       "plotOptions": {
+        "customPlotOptions": {},
+        "displayType": "table",
+        "pivotAggregation": null,
+        "pivotColumns": null,
+        "xColumns": null,
+        "yColumns": null
+       },
+       "removedWidgets": [],
+       "schema": [
+        {
+         "metadata": "{}",
+         "name": "customer_id",
+         "type": "\"long\""
+        },
+        {
+         "metadata": "{}",
+         "name": "name",
+         "type": "\"string\""
+        },
+        {
+         "metadata": "{}",
+         "name": "city",
+         "type": "\"string\""
+        }
+       ],
+       "type": "table"
+      }
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "customers.display()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "9f62b489-250d-4827-bc2e-5ebfbc4cb55d",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "display_data",
+     "data": {
+      "text/html": [
+       "<style scoped>\n",
+       "  .table-result-container {\n",
+       "    max-height: 300px;\n",
+       "    overflow: auto;\n",
+       "  }\n",
+       "  table, th, td {\n",
+       "    border: 1px solid black;\n",
+       "    border-collapse: collapse;\n",
+       "  }\n",
+       "  th, td {\n",
+       "    padding: 5px;\n",
+       "  }\n",
+       "  th {\n",
+       "    text-align: left;\n",
+       "  }\n",
+       "</style><div class='table-result-container'><table class='table-result'><thead style='background-color: white'><tr><th>car_id</th><th>brand</th><th>model</th><th>price</th></tr></thead><tbody><tr><td>101</td><td>Toyota</td><td>Camry</td><td>30000</td></tr><tr><td>102</td><td>Honda</td><td>Civic</td><td>-20000</td></tr><tr><td>103</td><td>Hyundai</td><td>i20</td><td>15000</td></tr></tbody></table></div>"
+      ]
+     },
+     "metadata": {
+      "application/vnd.databricks.v1+output": {
+       "addedWidgets": {},
+       "aggData": [],
+       "aggError": "",
+       "aggOverflow": false,
+       "aggSchema": [],
+       "aggSeriesLimitReached": false,
+       "aggType": "",
+       "arguments": {},
+       "columnCustomDisplayInfos": {},
+       "data": [
+        [
+         101,
+         "Toyota",
+         "Camry",
+         30000
+        ],
+        [
+         102,
+         "Honda",
+         "Civic",
+         -20000
+        ],
+        [
+         103,
+         "Hyundai",
+         "i20",
+         15000
+        ]
+       ],
+       "datasetInfos": [],
+       "dbfsResultPath": null,
+       "isJsonSchema": true,
+       "metadata": {},
+       "overflow": false,
+       "plotOptions": {
+        "customPlotOptions": {},
+        "displayType": "table",
+        "pivotAggregation": null,
+        "pivotColumns": null,
+        "xColumns": null,
+        "yColumns": null
+       },
+       "removedWidgets": [],
+       "schema": [
+        {
+         "metadata": "{}",
+         "name": "car_id",
+         "type": "\"long\""
+        },
+        {
+         "metadata": "{}",
+         "name": "brand",
+         "type": "\"string\""
+        },
+        {
+         "metadata": "{}",
+         "name": "model",
+         "type": "\"string\""
+        },
+        {
+         "metadata": "{}",
+         "name": "price",
+         "type": "\"long\""
+        }
+       ],
+       "type": "table"
+      }
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "cars.display()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "b3784e3a-a891-48a3-8d08-51bfb8f49794",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "display_data",
+     "data": {
+      "text/html": [
+       "<style scoped>\n",
+       "  .table-result-container {\n",
+       "    max-height: 300px;\n",
+       "    overflow: auto;\n",
+       "  }\n",
+       "  table, th, td {\n",
+       "    border: 1px solid black;\n",
+       "    border-collapse: collapse;\n",
+       "  }\n",
+       "  th, td {\n",
+       "    padding: 5px;\n",
+       "  }\n",
+       "  th {\n",
+       "    text-align: left;\n",
+       "  }\n",
+       "</style><div class='table-result-container'><table class='table-result'><thead style='background-color: white'><tr><th>sale_id</th><th>customer_id</th><th>car_id</th><th>sale_date</th><th>quantity</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>101</td><td>2024-01-01</td><td>1</td></tr><tr><td>2</td><td>2</td><td>102</td><td>2024-01-02</td><td>2</td></tr><tr><td>3</td><td>99</td><td>103</td><td>2024-01-03</td><td>1</td></tr></tbody></table></div>"
+      ]
+     },
+     "metadata": {
+      "application/vnd.databricks.v1+output": {
+       "addedWidgets": {},
+       "aggData": [],
+       "aggError": "",
+       "aggOverflow": false,
+       "aggSchema": [],
+       "aggSeriesLimitReached": false,
+       "aggType": "",
+       "arguments": {},
+       "columnCustomDisplayInfos": {},
+       "data": [
+        [
+         1,
+         1,
+         101,
+         "2024-01-01",
+         1
+        ],
+        [
+         2,
+         2,
+         102,
+         "2024-01-02",
+         2
+        ],
+        [
+         3,
+         99,
+         103,
+         "2024-01-03",
+         1
+        ]
+       ],
+       "datasetInfos": [],
+       "dbfsResultPath": null,
+       "isJsonSchema": true,
+       "metadata": {},
+       "overflow": false,
+       "plotOptions": {
+        "customPlotOptions": {},
+        "displayType": "table",
+        "pivotAggregation": null,
+        "pivotColumns": null,
+        "xColumns": null,
+        "yColumns": null
+       },
+       "removedWidgets": [],
+       "schema": [
+        {
+         "metadata": "{}",
+         "name": "sale_id",
+         "type": "\"long\""
+        },
+        {
+         "metadata": "{}",
+         "name": "customer_id",
+         "type": "\"long\""
+        },
+        {
+         "metadata": "{}",
+         "name": "car_id",
+         "type": "\"long\""
+        },
+        {
+         "metadata": "{}",
+         "name": "sale_date",
+         "type": "\"date\""
+        },
+        {
+         "metadata": "{}",
+         "name": "quantity",
+         "type": "\"long\""
+        }
+       ],
+       "type": "table"
+      }
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sales.display()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "077375bd-2b9c-4f65-bea2-b4feeab1f241",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "display_data",
+     "data": {
+      "text/html": [
+       "<style scoped>\n",
+       "  .table-result-container {\n",
+       "    max-height: 300px;\n",
+       "    overflow: auto;\n",
+       "  }\n",
+       "  table, th, td {\n",
+       "    border: 1px solid black;\n",
+       "    border-collapse: collapse;\n",
+       "  }\n",
+       "  th, td {\n",
+       "    padding: 5px;\n",
+       "  }\n",
+       "  th {\n",
+       "    text-align: left;\n",
+       "  }\n",
+       "</style><div class='table-result-container'><table class='table-result'><thead style='background-color: white'><tr><th>sale_id</th><th>customer_id</th><th>car_id</th><th>sale_date</th><th>quantity</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>101</td><td>2024-01-01</td><td>1</td></tr><tr><td>2</td><td>2</td><td>102</td><td>2024-01-02</td><td>2</td></tr><tr><td>3</td><td>99</td><td>103</td><td>2024-01-03</td><td>1</td></tr></tbody></table></div>"
+      ]
+     },
+     "metadata": {
+      "application/vnd.databricks.v1+output": {
+       "addedWidgets": {},
+       "aggData": [],
+       "aggError": "",
+       "aggOverflow": false,
+       "aggSchema": [],
+       "aggSeriesLimitReached": false,
+       "aggType": "",
+       "arguments": {},
+       "columnCustomDisplayInfos": {},
+       "data": [
+        [
+         1,
+         1,
+         101,
+         "2024-01-01",
+         1
+        ],
+        [
+         2,
+         2,
+         102,
+         "2024-01-02",
+         2
+        ],
+        [
+         3,
+         99,
+         103,
+         "2024-01-03",
+         1
+        ]
+       ],
+       "datasetInfos": [],
+       "dbfsResultPath": null,
+       "isJsonSchema": true,
+       "metadata": {},
+       "overflow": false,
+       "plotOptions": {
+        "customPlotOptions": {},
+        "displayType": "table",
+        "pivotAggregation": null,
+        "pivotColumns": null,
+        "xColumns": null,
+        "yColumns": null
+       },
+       "removedWidgets": [],
+       "schema": [
+        {
+         "metadata": "{}",
+         "name": "sale_id",
+         "type": "\"long\""
+        },
+        {
+         "metadata": "{}",
+         "name": "customer_id",
+         "type": "\"long\""
+        },
+        {
+         "metadata": "{}",
+         "name": "car_id",
+         "type": "\"long\""
+        },
+        {
+         "metadata": "{}",
+         "name": "sale_date",
+         "type": "\"date\""
+        },
+        {
+         "metadata": "{}",
+         "name": "quantity",
+         "type": "\"long\""
+        }
+       ],
+       "type": "table"
+      }
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sales.display()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "6104f74a-c236-499f-89d9-40f8a43b5a89",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "display_data",
+     "data": {
+      "text/html": [
+       "<style scoped>\n",
+       "  .table-result-container {\n",
+       "    max-height: 300px;\n",
+       "    overflow: auto;\n",
+       "  }\n",
+       "  table, th, td {\n",
+       "    border: 1px solid black;\n",
+       "    border-collapse: collapse;\n",
+       "  }\n",
+       "  th, td {\n",
+       "    padding: 5px;\n",
+       "  }\n",
+       "  th {\n",
+       "    text-align: left;\n",
+       "  }\n",
+       "</style><div class='table-result-container'><table class='table-result'><thead style='background-color: white'><tr><th>saler_dealer_id</th><th>dealer_id</th></tr></thead><tbody><tr><td>101</td><td>1</td></tr><tr><td>102</td><td>2</td></tr><tr><td>103</td><td>3</td></tr></tbody></table></div>"
+      ]
+     },
+     "metadata": {
+      "application/vnd.databricks.v1+output": {
+       "addedWidgets": {},
+       "aggData": [],
+       "aggError": "",
+       "aggOverflow": false,
+       "aggSchema": [],
+       "aggSeriesLimitReached": false,
+       "aggType": "",
+       "arguments": {},
+       "columnCustomDisplayInfos": {},
+       "data": [
+        [
+         101,
+         1
+        ],
+        [
+         102,
+         2
+        ],
+        [
+         103,
+         3
+        ]
+       ],
+       "datasetInfos": [],
+       "dbfsResultPath": null,
+       "isJsonSchema": true,
+       "metadata": {},
+       "overflow": false,
+       "plotOptions": {
+        "customPlotOptions": {},
+        "displayType": "table",
+        "pivotAggregation": null,
+        "pivotColumns": null,
+        "xColumns": null,
+        "yColumns": null
+       },
+       "removedWidgets": [],
+       "schema": [
+        {
+         "metadata": "{}",
+         "name": "saler_dealer_id",
+         "type": "\"long\""
+        },
+        {
+         "metadata": "{}",
+         "name": "dealer_id",
+         "type": "\"long\""
+        }
+       ],
+       "type": "table"
+      }
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sales_delaer.display()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "7d7bd646-32af-47a1-a18b-5a35a8b4514f",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "2. Check schema"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "6eb55bfe-edb2-4359-a91c-777821927a43",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "root\n |-- customer_id: long (nullable = true)\n |-- name: string (nullable = true)\n |-- city: string (nullable = true)\n\nroot\n |-- car_id: long (nullable = true)\n |-- brand: string (nullable = true)\n |-- model: string (nullable = true)\n |-- price: long (nullable = true)\n\nroot\n |-- dealer_id: long (nullable = true)\n |-- name: string (nullable = true)\n |-- city: string (nullable = true)\n\nroot\n |-- sale_id: long (nullable = true)\n |-- customer_id: long (nullable = true)\n |-- car_id: long (nullable = true)\n |-- sale_date: date (nullable = true)\n |-- quantity: long (nullable = true)\n\nroot\n |-- saler_dealer_id: long (nullable = true)\n |-- dealer_id: long (nullable = true)\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "customers.printSchema()\n",
+    "cars.printSchema()\n",
+    "dealers.printSchema()\n",
+    "sales.printSchema()\n",
+    "sales_delaer.printSchema()\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "1e44548e-5d7f-4253-91fc-73ee0d747759",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Identify issues \n",
+    "1. Finding nulls\n",
+    "2. Finding Duplicates"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "683a7074-724f-41f8-91a7-fabd0d2dec58",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+-----------+----+----+\n|customer_id|name|city|\n+-----------+----+----+\n|          0|   1|   0|\n+-----------+----+----+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "customers.select([sum(col(c).isNull().cast(\"int\")).alias(c)\n",
+    "for c in customers.columns ]) .show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "5b05b8c9-408f-452e-863d-dc11bc00e3db",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+---------+----+----+\n|dealer_id|name|city|\n+---------+----+----+\n|        0|   0|   0|\n+---------+----+----+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "dealers.select([sum(col(c).isNull().cast('int')).alias(c) \n",
+    "for c in dealers.columns]).show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "ec786e81-768d-4638-a1e9-e73753e90178",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+------+-----+-----+-----+\n|car_id|brand|model|price|\n+------+-----+-----+-----+\n|     0|    0|    0|    0|\n+------+-----+-----+-----+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "cars.select([sum(col(c).isNull().cast('int')).alias(c)\n",
+    "for c in cars.columns]).show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "a71f1600-96ab-4d54-945d-3546da48f03a",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+-------+-----------+------+---------+--------+\n|sale_id|customer_id|car_id|sale_date|quantity|\n+-------+-----------+------+---------+--------+\n|      0|          0|     0|        0|       0|\n+-------+-----------+------+---------+--------+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "sales.select([sum(col(c).isNull().cast('int')).alias(c)\n",
+    "              for c in sales.columns]).show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "ea684cff-110b-43a8-b75c-6492ec974324",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+---------------+---------+\n|saler_dealer_id|dealer_id|\n+---------------+---------+\n|              0|        0|\n+---------------+---------+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "sales_delaer.select([sum(col(c).isNull().cast('int')).alias(c)\n",
+    "              for c in sales_delaer.columns]).show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "3a61368a-4812-4869-b268-b910721494bb",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "check duplicates"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "0ea8ccf0-9c8b-461c-9a52-c36502c163b1",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+-----------+----+----+-----+\n|customer_id|name|city|count|\n+-----------+----+----+-----+\n+-----------+----+----+-----+\n\n+------+-----+-----+-----+-----+\n|car_id|brand|model|price|count|\n+------+-----+-----+-----+-----+\n+------+-----+-----+-----+-----+\n\n+-------+-----------+------+---------+--------+-----+\n|sale_id|customer_id|car_id|sale_date|quantity|count|\n+-------+-----------+------+---------+--------+-----+\n+-------+-----------+------+---------+--------+-----+\n\n+---------+----+----+-----+\n|dealer_id|name|city|count|\n+---------+----+----+-----+\n+---------+----+----+-----+\n\n+---------------+---------+-----+\n|saler_dealer_id|dealer_id|count|\n+---------------+---------+-----+\n+---------------+---------+-----+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "customers.groupBy(customers.columns).count().filter(\"count > 1\").show()\n",
+    "cars.groupBy(cars.columns).count().filter(\"count > 1\").show()\n",
+    "sales.groupBy(sales.columns).count().filter(\"count > 1\").show()\n",
+    "dealers.groupBy(dealers.columns).count().filter(\"count > 1\").show()\n",
+    "sales_delaer.groupBy(sales_delaer.columns).count().filter(\"count > 1\").show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "c0ab22df-7532-4785-9b4d-88d282fdbf1b",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+------+-----+-----+------+\n|car_id|brand|model| price|\n+------+-----+-----+------+\n|   102|Honda|Civic|-20000|\n+------+-----+-----+------+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "cars.filter(col(\"price\") < 0).show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "411ea718-ab79-474b-b31e-d7ffeb80489a",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+-----------+-------+------+----------+--------+\n|customer_id|sale_id|car_id| sale_date|quantity|\n+-----------+-------+------+----------+--------+\n|         99|      3|   103|2024-01-03|       1|\n+-----------+-------+------+----------+--------+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "sales.join(customers, \"customer_id\", \"left_anti\").show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "f4f1a504-3914-4d2d-a241-7a41f0f56e16",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Drop dupliates"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "d336144e-2d8b-4958-89cb-4a176feddfcb",
+     "showTitle": true,
+     "tableResultSettingsMap": {},
+     "title": "Cell 22"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "customers = customers.dropDuplicates()\n",
+    "cars = cars.dropDuplicates()\n",
+    "dealers = dealers.dropDuplicates()\n",
+    "sales = sales.dropDuplicates()\n",
+    "sales_delaer = sales_delaer.dropDuplicates()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "824251a3-3ca0-4786-b41c-816e7af9430a",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Phase 2 – Cleaning\n",
+    "\n",
+    "1. Handling Nulls"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "fa43783e-3b66-44b6-84ab-db872a11641d",
+     "showTitle": true,
+     "tableResultSettingsMap": {},
+     "title": "Cell 24"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "customers_clean=customers.fillna({\n",
+    "  \"name\":\"blank\",\n",
+    "  \"city\":\"blank\"\n",
+    "})\n",
+    "cars_clean=cars.fillna({\n",
+    "  \"brand\":\"blank\",\n",
+    "  \"model\":\"blank\",\n",
+    "  \"price\":0\n",
+    "})\n",
+    "sales_clean=sales.fillna({\n",
+    "  \"quantity\":1\n",
+    "})"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "70ca2edb-9693-4434-b654-eb92074f1ff7",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    " Fix negative prices\n",
+    " "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "6eca72d2-2e94-4156-920c-2507e3cabd6d",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+------+-------+-----+-----+\n|car_id|  brand|model|price|\n+------+-------+-----+-----+\n|   101| Toyota|Camry|30000|\n|   102|  Honda|Civic|20000|\n|   103|Hyundai|  i20|15000|\n+------+-------+-----+-----+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "cars_clean=cars_clean.withColumn(\"price\",abs(col('price')))\n",
+    "cars_clean.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "9ffad37c-e76c-4552-8d9e-1e2c9d4c25ad",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Remove invalid keys"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "fd51eddd-8c58-4503-b821-49059ad023d9",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [],
+   "source": [
+    "sales_clean=sales_clean.join(\n",
+    "    customers_clean,\n",
+    "    \"customer_id\",\n",
+    "    \"inner\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "e8cfaeda-f0e8-4505-97ef-d292890cae38",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Phase 3 – Validation"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "9d2f3564-9c9d-4bef-a776-dd6aa79ef006",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Anti join"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "c61f3d33-1926-47d5-b344-b02c0c091420",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+-----------+-------+------+---------+--------+----+----+\n|customer_id|sale_id|car_id|sale_date|quantity|name|city|\n+-----------+-------+------+---------+--------+----+----+\n+-----------+-------+------+---------+--------+----+----+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "invalid_cust_sales=sales_clean.join(\n",
+    "  customers_clean,\n",
+    "  \"customer_id\",\n",
+    "  \"left_anti\"\n",
+    ")\n",
+    "invalid_cust_sales.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "a793799c-e64b-4176-9d64-9ef9f28f2cd1",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+---------+---------------+\n|dealer_id|saler_dealer_id|\n+---------+---------------+\n+---------+---------------+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "invalid_dealer=sales_delaer.join(\n",
+    "    dealers,\n",
+    "    \"dealer_id\",\n",
+    "    \"left_anti\"\n",
+    ")\n",
+    "invalid_dealer.show()\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "34d52feb-b475-4c55-bea7-4c8d2d548977",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+------+-----------+-------+---------+--------+----+----+\n|car_id|customer_id|sale_id|sale_date|quantity|name|city|\n+------+-----------+-------+---------+--------+----+----+\n+------+-----------+-------+---------+--------+----+----+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "invalid_car_sales = sales_clean.join(\n",
+    "    cars_clean,\n",
+    "    \"car_id\",\n",
+    "    \"left_anti\"\n",
+    ")\n",
+    "\n",
+    "invalid_car_sales.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "05a78bd2-c83f-4bd5-902b-ff67740083f9",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "2. Validation repor"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "30485ed4-70d0-4875-b808-30355f509dde",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Count invalid records"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "47c42836-5ea3-4d5d-8f39-b33126f5f490",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [],
+   "source": [
+    "invalid_customer_count = invalid_cust_sales.count()\n",
+    "invalid_car_count = invalid_car_sales.count()\n",
+    "invalid_dealer_count = invalid_dealer.count()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "a2733cf6-8dd9-41cc-8bf8-2d386e3a71c0",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Total records"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "49c84808-7271-4df7-aab0-88d7e7bc7fc5",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [],
+   "source": [
+    "total_customers = customers_clean.count()\n",
+    "total_cars = cars_clean.count()\n",
+    "total_dealers = dealers.count()\n",
+    "total_sales = sales_clean.count()\n",
+    "total_sales_dealer = sales_delaer.count()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "57f67599-aa52-4499-98ce-957cc208adc0",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Create validation report"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "6b40eae3-ccfb-466f-ad64-7c1197203eb8",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+--------------------+-----+\n|               check|count|\n+--------------------+-----+\n|Invalid Customer IDs|    0|\n|     Invalid Car IDs|    0|\n|  Invalid Dealer IDs|    0|\n| Total Sales Records|    2|\n|Total Sales Deale...|    3|\n+--------------------+-----+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "from pyspark.sql import Row\n",
+    "validation_data = [\n",
+    "    Row(check=\"Invalid Customer IDs\", count=invalid_customer_count),\n",
+    "    Row(check=\"Invalid Car IDs\", count=invalid_car_count),\n",
+    "    Row(check=\"Invalid Dealer IDs\", count=invalid_dealer_count),\n",
+    "    Row(check=\"Total Sales Records\", count=total_sales),\n",
+    "    Row(check=\"Total Sales Dealer Records\", count=total_sales_dealer)\n",
+    "]\n",
+    "\n",
+    "validation_report_df = spark.createDataFrame(validation_data)\n",
+    "validation_report_df.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "4678c21e-d4a0-4539-96c1-40d0686d7f61",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Phase 4 – Transformation\n",
+    "\n",
+    "1.Revenue per customer"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "1648e582-840b-415f-a1db-95445464e1d0",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+-----------+-------------+\n|customer_id|total_revenue|\n+-----------+-------------+\n|          1|        30000|\n|          2|        40000|\n+-----------+-------------+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "sales_with_price = sales_clean.join(\n",
+    "    cars_clean,\n",
+    "    \"car_id\",\n",
+    "    \"inner\"\n",
+    ")\n",
+    "sales_with_revenue = sales_with_price.withColumn(\n",
+    "    \"revenue\",\n",
+    "    col(\"price\") * col(\"quantity\")\n",
+    ")\n",
+    "revenue_per_customer = (sales_with_revenue.groupBy(\"customer_id\")\n",
+    "    .sum(\"revenue\")\n",
+    "    .withColumnRenamed(\"sum(revenue)\", \"total_revenue\"))\n",
+    "\n",
+    "revenue_per_customer.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "052401bf-c3e8-417a-bbb0-be9573a274ec",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "2.Cars per Brand"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "3eba834d-5a34-4bee-bcc4-bb0929320681",
+     "showTitle": true,
+     "tableResultSettingsMap": {},
+     "title": "Untitled"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+-------+----------+\n|  brand|total_cars|\n+-------+----------+\n| Toyota|         1|\n|  Honda|         1|\n|Hyundai|         1|\n+-------+----------+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "cars_per_brand = (cars_clean.groupBy(\"brand\").count().withColumnRenamed(\"count\", \"total_cars\"))\n",
+    "\n",
+    "cars_per_brand.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "8ca15f10-83ac-46bd-be55-93117663f700",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "3. City revenue"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "bca20472-f465-4b4d-b025-caa4fced9719",
+     "showTitle": true,
+     "tableResultSettingsMap": {},
+     "title": "Cell 46"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+---------+-------------+\n|city     |total_revenue|\n+---------+-------------+\n|Hyderabad|30000        |\n|Chennai  |40000        |\n+---------+-------------+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "from pyspark.sql.functions import col\n",
+    "\n",
+    "# Step 1: Alias all DataFrames (to avoid ambiguous column error)\n",
+    "sales_alias = sales_clean.alias(\"s\")\n",
+    "cars_alias = cars_clean.alias(\"c\")\n",
+    "customers_alias = customers_clean.alias(\"cu\")\n",
+    "\n",
+    "# Step 2: Join tables\n",
+    "sales_full = (sales_alias\n",
+    "    .join(cars_alias, col(\"s.car_id\") == col(\"c.car_id\"), \"inner\")\n",
+    "    .join(customers_alias, col(\"s.customer_id\") == col(\"cu.customer_id\"), \"inner\"))\n",
+    "\n",
+    "# Step 3: Calculate revenue\n",
+    "sales_full = sales_full.withColumn(\n",
+    "    \"revenue\",\n",
+    "    col(\"c.price\") * col(\"s.quantity\")\n",
+    ")\n",
+    "\n",
+    "# Step 4: Aggregate city-wise revenue\n",
+    "city_revenue = (sales_full.groupBy(col(\"cu.city\").alias(\"city\"))\n",
+    "    .sum(\"revenue\")\n",
+    "    .withColumnRenamed(\"sum(revenue)\", \"total_revenue\"))\n",
+    "\n",
+    "# Step 5: Show output\n",
+    "city_revenue.show(10, False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {},
+     "inputWidgets": {},
+     "nuid": "18c42afc-b16d-486d-9822-8dfee9ca1580",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Phase 5 – SQL Analysis"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "cc2b0f2c-d1ba-41b1-a4e7-0a2de89df055",
+     "showTitle": true,
+     "tableResultSettingsMap": {},
+     "title": "Untitled"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+---------+-----------+-----------+----+\n|     city|customer_id|total_spent|rank|\n+---------+-----------+-----------+----+\n|  Chennai|          2|      20000|   1|\n|Hyderabad|          1|      30000|   1|\n+---------+-----------+-----------+----+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "from pyspark.sql.window import Window\n",
+    "from pyspark.sql.functions import col, row_number, sum\n",
+    "\n",
+    "# Step 1: Join with cars table (sales_clean already has customer data from Cell 28)\n",
+    "df = sales_clean.join(cars_clean, \"car_id\", \"left\")\n",
+    "\n",
+    "# Step 2: Aggregate total spending per customer per city\n",
+    "df_agg = df.groupBy(\"city\", \"customer_id\") \\\n",
+    "           .agg(sum(\"price\").alias(\"total_spent\"))\n",
+    "\n",
+    "# Step 3: Define window (partition by city)\n",
+    "window_spec = Window.partitionBy(\"city\").orderBy(col(\"total_spent\").desc())\n",
+    "\n",
+    "# Step 4: Apply row_number\n",
+    "df_ranked = df_agg.withColumn(\"rank\", row_number().over(window_spec))\n",
+    "\n",
+    "# Step 5: Get Top 3 per city\n",
+    "df_ranked.filter(col(\"rank\") <= 3).show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {},
+     "inputWidgets": {},
+     "nuid": "426fd259-0c72-4d07-a44d-e773ae4d3e70",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "repeated customers\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "426e6fba-cf87-485f-8e7c-b816909fef32",
+     "showTitle": true,
+     "tableResultSettingsMap": {},
+     "title": "Untitled"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+-----------+-------------+\n|customer_id|num_purchases|\n+-----------+-------------+\n+-----------+-------------+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "from pyspark.sql.functions import count\n",
+    "\n",
+    "df_repeat = (sales_clean.groupBy(\"customer_id\")\n",
+    "    .agg(count(\"*\").alias(\"num_purchases\"))\n",
+    "    .filter(\"num_purchases > 1\"))\n",
+    "\n",
+    "df_repeat.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {},
+     "inputWidgets": {},
+     "nuid": "a3f82fbe-4426-4aac-b6e0-f2c939050561",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "3 Monthly trend\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "a7f7e46f-7615-4d3f-8e73-bee0e1396dbd",
+     "showTitle": true,
+     "tableResultSettingsMap": {},
+     "title": "Monthly revenue trend"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+----+-----+-------------+\n|year|month|total_revenue|\n+----+-----+-------------+\n|2024|    1|        70000|\n+----+-----+-------------+\n\n"
+     ]
+    }
+   ],
+   "source": [
+    "from pyspark.sql.functions import month, year, sum as spark_sum\n",
+    "\n",
+    "# Join sales with cars to get price information\n",
+    "monthly_sales = sales_clean.join(cars_clean, \"car_id\", \"inner\")\n",
+    "\n",
+    "# Calculate revenue\n",
+    "monthly_sales = monthly_sales.withColumn(\"revenue\", col(\"price\") * col(\"quantity\"))\n",
+    "\n",
+    "# Extract year and month, then aggregate\n",
+    "monthly_trend = (monthly_sales\n",
+    "    .withColumn(\"year\", year(\"sale_date\"))\n",
+    "    .withColumn(\"month\", month(\"sale_date\"))\n",
+    "    .groupBy(\"year\", \"month\")\n",
+    "    .agg(spark_sum(\"revenue\").alias(\"total_revenue\"))\n",
+    "    .orderBy(\"year\", \"month\"))\n",
+    "\n",
+    "monthly_trend.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {},
+     "inputWidgets": {},
+     "nuid": "c1eca66a-d492-447f-a170-969365643a8a",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "Phase-6: OUTPUT"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "inputWidgets": {},
+     "nuid": "a505fe8a-7546-4dc2-b340-815e95290e17",
+     "showTitle": true,
+     "tableResultSettingsMap": {},
+     "title": "Save outputs to /tmp/car_sales_output"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "✓ Data saved successfully to /Workspace/Users/22pa1a1283@vishnu.edu.in/car_sales_output/\n  - monthly_trend.csv\n  - revenue_per_customer.csv\n  - city_revenue.csv\n  - cars_per_brand.csv\n"
+     ]
+    }
+   ],
+   "source": [
+    "import os\n",
+    "\n",
+    "# Create output directory\n",
+    "output_path = \"/Workspace/Users/22pa1a1283@vishnu.edu.in/car_sales_output\"\n",
+    "os.makedirs(output_path, exist_ok=True)\n",
+    "\n",
+    "# Convert to pandas and save as CSV files\n",
+    "monthly_trend.toPandas().to_csv(f\"{output_path}/monthly_trend.csv\", index=False)\n",
+    "revenue_per_customer.toPandas().to_csv(f\"{output_path}/revenue_per_customer.csv\", index=False)\n",
+    "city_revenue.toPandas().to_csv(f\"{output_path}/city_revenue.csv\", index=False)\n",
+    "cars_per_brand.toPandas().to_csv(f\"{output_path}/cars_per_brand.csv\", index=False)\n",
+    "\n",
+    "print(f\"✓ Data saved successfully to {output_path}/\")\n",
+    "print(f\"  - monthly_trend.csv\")\n",
+    "print(f\"  - revenue_per_customer.csv\")\n",
+    "print(f\"  - city_revenue.csv\")\n",
+    "print(f\"  - cars_per_brand.csv\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "application/vnd.databricks.v1+notebook": {
+   "computePreferences": null,
+   "dashboards": [],
+   "environmentMetadata": {
+    "base_environment": "",
+    "environment_version": "5"
+   },
+   "inputWidgetPreferences": null,
+   "language": "python",
+   "notebookMetadata": {
+    "pythonIndentUnit": 4
+   },
+   "notebookName": "Pipeline_mini.py",
+   "widgets": {}
+  },
+  "language_info": {
+   "name": "python"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}
