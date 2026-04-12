@@ -1,0 +1,129 @@
+# Import required PySpark modules
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+
+# Create Spark Session
+spark = SparkSession.builder.appName("app").getOrCreate()
+
+# Load CSV file into DataFrame
+# header=True → first row as column names
+# inferSchema=True → automatically detect data types
+df = spark.read.format('csv') \
+    .option("header", "True") \
+    .option("inferSchema", "True") \
+    .load("/Volumes/volume1/phase5/subbu/Big Sales.csv")
+
+# Display full DataFrame
+display(df)
+
+
+# Filter rows where item_fat_content = 'Regular'
+df.filter(col("item_fat_content") == "Regular").display()
+
+
+# Filter rows where item_type = 'Soft Drinks'
+df.filter(col("item_type") == "Soft Drinks").display()
+
+
+# Filter rows where:
+# Outlet_Location_Type is either Tier 1 or Tier 2
+# AND Outlet_Size is NULL
+df.filter(
+    (col("Outlet_Location_Type").isin("Tier 1", "Tier 2")) &
+    (col("Outlet_Size").isNull())
+).display()
+
+
+# Rename column Item_Weight → Item_Wt
+df = df.withColumnRenamed("Item_Weight", "Item_Wt")
+df.display()
+
+
+# Add new column 'flag' with constant value 'new'
+df.withColumn('flag', lit('new')).display()
+
+
+# Replace values in item_fat_content column:
+# Low Fat → LF
+# Regular → Reg
+df = df.withColumn(
+    "item_fat_content",
+    when(col("item_fat_content") == "Low Fat", "LF")
+    .when(col("item_fat_content") == "Regular", "Reg")
+    .otherwise(col("item_fat_content"))
+)
+df.display()
+
+
+# Filter rows where Outlet_Size is NULL
+df.filter(col("Outlet_Size").isNull()).display()
+
+
+# Type casting:
+# Convert Item_Wt column to String type
+df = df.withColumn("Item_Wt", col("Item_Wt").cast(StringType()))
+df.display()
+
+
+# Sort data in descending order of Item_MRP
+df.sort(col("Item_MRP").desc()).display()
+
+
+# Replace 'Reg' with 'Re' in item_fat_content column using regex
+df = df.withColumn(
+    "item_fat_content",
+    regexp_replace(col("item_fat_content"), "Reg", "Re")
+)
+
+
+# Sort by multiple columns:
+# Item_MRP DESC and Item_Visibility DESC
+df.sort(["Item_MRP", "Item_Visibility"], ascending=[0, 0]).display()
+
+
+# Show top 5 rows after sorting
+df.sort(["Item_MRP", "Item_Visibility"], ascending=[0, 0]).limit(5).display()
+
+
+# Remove duplicate rows (all columns)
+df.dropDuplicates().display()
+
+
+# Remove duplicates based on Item_Type column only
+df1 = df.dropDuplicates(["Item_Type"])
+df1.display()
+
+
+# Convert Item_Type values to proper case (first letter capital)
+df1.withColumn("Item_Type", initcap(col("Item_Type"))).display()
+
+
+# Add current date column
+df1 = df1.withColumn("current_Date", current_date())
+df1.display()
+
+
+# Add column with date after 7 days
+df1 = df1.withColumn("week_after_day", date_add(current_date(), 7))
+df1.display()
+
+
+# Add column with date before 7 days
+df1 = df1.withColumn("week_before_day", date_sub(current_date(), 7))
+df1.display()
+
+
+# Fill NULL values:
+# Outlet_Size → 'unknown'
+# Item_Wt → 'unknown'
+df1 = df1.fillna({
+    "Outlet_Size": "unknown",
+    "Item_Wt": "unknown"
+})
+df1.display()
+
+
+# Split Outlet_Type column into array based on space
+df1 = df1.withColumn("Outlet_Type", split('Outlet_Type', ' '))
+df1.display()
